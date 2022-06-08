@@ -1,6 +1,7 @@
 package com.natureglobal.opentok_flutter
 
 import android.content.Context
+import android.opengl.GLSurfaceView
 import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.NonNull
@@ -82,12 +83,17 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 opentokVideoPlatformView.publisherContainer.addView(view)
+
+                if (view is GLSurfaceView) {
+                    (view as GLSurfaceView).setZOrderOnTop(true)
+                }
             }
 
             val connectionStateCallback: OpenTok.ConnectionStateCallback =
                 OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.loggedIn)
                     .build()
             openTokPlatform.onStateUpdate(connectionStateCallback) {}
+
             session.publish(publisher)
         }
 

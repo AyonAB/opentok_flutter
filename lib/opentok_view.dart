@@ -88,10 +88,23 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
 /// Widget that displays the OpenTok video controlled by [controller].
 class OpenTokView extends StatefulWidget {
   /// Constructs an instance of [OpenTokView] with the given [controller].
-  const OpenTokView({Key? key, required this.controller}) : super(key: key);
+  const OpenTokView({
+    Key? key,
+    required this.controller,
+    this.alignment = Alignment.bottomCenter,
+    this.child,
+  }) : super(key: key);
 
   /// The [OpenTokController] responsible for the OpenTok video being rendered in this widget.
   final OpenTokController controller;
+
+  /// Alighnment of the child. Default to [Alignment.bottomCenter].
+  final Alignment alignment;
+
+  /// Child widget to render on top of the video chat view.
+  /// 
+  /// Usual place for the action buttons of the video chat. (e.g. End, Toggle camera, mute etc.)
+  final Widget? child;
 
   @override
   State<OpenTokView> createState() => _OpenTokViewState();
@@ -115,48 +128,26 @@ class _OpenTokViewState extends State<OpenTokView> {
 
   void _listener() {
     print("Connection State: ${widget.controller.value.state.name}");
-    print("Audio Enabled: ${widget.controller.value.audioEnabled.toString()}");
-    print("Video Enabled: ${widget.controller.value.videoEnabled.toString()}");
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (defaultTargetPlatform == TargetPlatform.android)
-          const AndroidOpenTokVideoView(viewType: viewType)
-        else if (defaultTargetPlatform == TargetPlatform.iOS)
-          const IOSOpenTokVideoView(viewType: viewType)
-        else
-          throw UnsupportedError('Unsupported platform view'),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              onPressed: widget.controller.endSession,
-              icon: const Icon(Icons.call_end),
-              color: Colors.red,
-            ),
-            IconButton(
-              onPressed: widget.controller.toggleCamera,
-              icon: const Icon(Icons.cameraswitch),
-            ),
-            IconButton(
-              onPressed: () => widget.controller.toggleAudio(!widget.controller.value.audioEnabled),
-              icon: widget.controller.value.audioEnabled
-                  ? const Icon(Icons.mic)
-                  : const Icon(Icons.mic_off),
-            ),
-            IconButton(
-              onPressed: () => widget.controller.toggleVideo(!widget.controller.value.videoEnabled),
-              icon: widget.controller.value.videoEnabled
-                  ? const Icon(Icons.videocam)
-                  : const Icon(Icons.videocam_off),
-            ),
-          ],
-        ),
-      ],
+    return SafeArea(
+      child: Stack(
+        children: [
+          if (defaultTargetPlatform == TargetPlatform.android)
+            const AndroidOpenTokVideoView(viewType: viewType)
+          else if (defaultTargetPlatform == TargetPlatform.iOS)
+            const IOSOpenTokVideoView(viewType: viewType)
+          else
+            throw UnsupportedError('Unsupported platform view'),
+          Align(
+            alignment: widget.alignment,
+            child: widget.child,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -171,30 +162,27 @@ class AndroidOpenTokVideoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: PlatformViewLink(
-        viewType: viewType,
-        surfaceFactory: (BuildContext context, PlatformViewController controller) {
-          return AndroidViewSurface(
-            controller: controller as AndroidViewController,
-            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          );
-        },
-        onCreatePlatformView: (PlatformViewCreationParams params) {
-          return PlatformViewsService.initSurfaceAndroidView(
-            id: params.id,
-            viewType: viewType,
-            layoutDirection: TextDirection.ltr,
-            creationParams: {},
-            creationParamsCodec: const StandardMessageCodec(),
-            onFocus: () => params.onFocusChanged(true),
-          )
-            ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
-            ..create();
-        },
-      ),
+    return PlatformViewLink(
+      viewType: viewType,
+      surfaceFactory: (BuildContext context, PlatformViewController controller) {
+        return AndroidViewSurface(
+          controller: controller as AndroidViewController,
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+        );
+      },
+      onCreatePlatformView: (PlatformViewCreationParams params) {
+        return PlatformViewsService.initSurfaceAndroidView(
+          id: params.id,
+          viewType: viewType,
+          layoutDirection: TextDirection.ltr,
+          creationParams: {},
+          creationParamsCodec: const StandardMessageCodec(),
+          onFocus: () => params.onFocusChanged(true),
+        )
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..create();
+      },
     );
   }
 }
