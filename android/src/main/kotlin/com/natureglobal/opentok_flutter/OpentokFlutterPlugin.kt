@@ -2,6 +2,8 @@ package com.natureglobal.opentok_flutter
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.NonNull
@@ -43,7 +45,9 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
         val connectionStateCallback: OpenTok.ConnectionStateCallback =
             OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.wait)
                 .build()
-        openTokPlatform.onStateUpdate(connectionStateCallback) {}
+        Handler(Looper.getMainLooper()).post {
+            openTokPlatform.onStateUpdate(connectionStateCallback) {}
+        }
 
         session = Session.Builder(context, config.apiKey, config.sessionId).build()
         session?.setSessionListener(sessionListener)
@@ -92,16 +96,21 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
             val connectionStateCallback: OpenTok.ConnectionStateCallback =
                 OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.loggedIn)
                     .build()
-            openTokPlatform.onStateUpdate(connectionStateCallback) {}
+            Handler(Looper.getMainLooper()).post {
+                openTokPlatform.onStateUpdate(connectionStateCallback) {}
+            }
 
             session.publish(publisher)
         }
 
         override fun onDisconnected(session: Session) {
             val connectionStateCallback: OpenTok.ConnectionStateCallback =
-                OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.loggedOut)
+                OpenTok.ConnectionStateCallback.Builder()
+                    .setState(OpenTok.ConnectionState.loggedOut)
                     .build()
-            openTokPlatform.onStateUpdate(connectionStateCallback) {}
+            Handler(Looper.getMainLooper()).post {
+                openTokPlatform.onStateUpdate(connectionStateCallback) {}
+            }
         }
 
         override fun onStreamReceived(session: Session, stream: Stream) {
@@ -113,7 +122,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
                 subscriber = Subscriber.Builder(context, stream).build().apply {
                     renderer?.setStyle(
                         BaseVideoRenderer.STYLE_VIDEO_SCALE,
-                        BaseVideoRenderer.STYLE_VIDEO_FILL
+                        BaseVideoRenderer.STYLE_VIDEO_FIT
                     )
                     setSubscriberListener(subscriberListener)
                     session.subscribe(this)
@@ -138,9 +147,12 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
         override fun onError(session: Session, opentokError: OpentokError) {
             Log.d("OpenTok Flutter", "Session error: " + opentokError.message)
             val connectionStateCallback: OpenTok.ConnectionStateCallback =
-                OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.error)
+                OpenTok.ConnectionStateCallback.Builder()
+                    .setState(OpenTok.ConnectionState.error)
                     .build()
-            openTokPlatform.onStateUpdate(connectionStateCallback) {}
+            Handler(Looper.getMainLooper()).post {
+                openTokPlatform.onStateUpdate(connectionStateCallback) { }
+            }
         }
     }
 
@@ -163,9 +175,12 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
             override fun onError(publisherKit: PublisherKit, opentokError: OpentokError) {
                 Log.d("OpenTok Flutter", "PublisherKit onError: " + opentokError.message)
                 val connectionStateCallback: OpenTok.ConnectionStateCallback =
-                    OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.error)
+                    OpenTok.ConnectionStateCallback.Builder()
+                        .setState(OpenTok.ConnectionState.error)
                         .build()
-                openTokPlatform.onStateUpdate(connectionStateCallback) {}
+                Handler(Looper.getMainLooper()).post {
+                    openTokPlatform.onStateUpdate(connectionStateCallback) {}
+                }
             }
         }
 
@@ -184,17 +199,23 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
                     "onDisconnected: Subscriber disconnected. Stream: " + subscriberKit.stream.streamId
                 )
                 val connectionStateCallback: OpenTok.ConnectionStateCallback =
-                    OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.loggedOut)
+                    OpenTok.ConnectionStateCallback.Builder()
+                        .setState(OpenTok.ConnectionState.loggedOut)
                         .build()
-                openTokPlatform.onStateUpdate(connectionStateCallback) {}
+                Handler(Looper.getMainLooper()).post {
+                    openTokPlatform.onStateUpdate(connectionStateCallback) {}
+                }
             }
 
             override fun onError(subscriberKit: SubscriberKit, opentokError: OpentokError) {
                 Log.d("OpenTok Flutter", "SubscriberKit onError: " + opentokError.message)
                 val connectionStateCallback: OpenTok.ConnectionStateCallback =
-                    OpenTok.ConnectionStateCallback.Builder().setState(OpenTok.ConnectionState.error)
+                    OpenTok.ConnectionStateCallback.Builder()
+                        .setState(OpenTok.ConnectionState.error)
                         .build()
-                openTokPlatform.onStateUpdate(connectionStateCallback) {}
+                Handler(Looper.getMainLooper()).post {
+                    openTokPlatform.onStateUpdate(connectionStateCallback) {}
+                }
             }
         }
 }

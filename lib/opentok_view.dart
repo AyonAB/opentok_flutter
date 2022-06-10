@@ -92,7 +92,15 @@ class OpenTokView extends StatefulWidget {
     Key? key,
     required this.controller,
     this.alignment = Alignment.bottomCenter,
-    this.child,
+    this.direction = Axis.horizontal,
+    this.spacing = 10,
+    this.padding,
+    this.buttonPadding,
+    this.onEndButtonTap,
+    this.onCameraButtonTap,
+    this.onMicButtonTap,
+    this.onVideoButtonTap,
+    this.onFullScreenButtonTap,
   }) : super(key: key);
 
   /// The [OpenTokController] responsible for the OpenTok video being rendered in this widget.
@@ -101,10 +109,37 @@ class OpenTokView extends StatefulWidget {
   /// Alighnment of the child. Default to [Alignment.bottomCenter].
   final Alignment alignment;
 
-  /// Child widget to render on top of the video chat view.
-  /// 
-  /// Usual place for the action buttons of the video chat. (e.g. End, Toggle camera, mute etc.)
-  final Widget? child;
+  /// The direction of the action buttons. Default to [Axis.horizontal]
+  final Axis direction;
+
+  /// The spacing between the action buttons. Defaults to 10.
+  final double spacing;
+
+  /// The padding around the action buttons. Defaults to 10.0.
+  final EdgeInsetsGeometry? padding;
+
+  /// The padding of the action buttons. Defaults to 10.0.
+  final EdgeInsetsGeometry? buttonPadding;
+
+  /// Called when end button is tapped.
+  /// The button will be hidden if its null;
+  final VoidCallback? onEndButtonTap;
+
+  /// Called when camera button is tapped.
+  /// The button will be hidden if its null;
+  final VoidCallback? onCameraButtonTap;
+
+  /// Called when microphone/audio button is tapped.
+  /// The button will be hidden if its null;
+  final void Function(bool)? onMicButtonTap;
+
+  /// Called when video button is tapped.
+  /// The button will be hidden if its null;
+  final void Function(bool)? onVideoButtonTap;
+
+  /// Called when full screen button is tapped.
+  /// The button will be hidden if its null;
+  final VoidCallback? onFullScreenButtonTap;
 
   @override
   State<OpenTokView> createState() => _OpenTokViewState();
@@ -127,27 +162,102 @@ class _OpenTokViewState extends State<OpenTokView> {
   }
 
   void _listener() {
-    print("Connection State: ${widget.controller.value.state.name}");
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          if (defaultTargetPlatform == TargetPlatform.android)
-            const AndroidOpenTokVideoView(viewType: viewType)
-          else if (defaultTargetPlatform == TargetPlatform.iOS)
-            const IOSOpenTokVideoView(viewType: viewType)
-          else
-            throw UnsupportedError('Unsupported platform view'),
-          Align(
-            alignment: widget.alignment,
-            child: widget.child,
+    return Stack(
+      children: [
+        if (defaultTargetPlatform == TargetPlatform.android)
+          const AndroidOpenTokVideoView(viewType: viewType)
+        else if (defaultTargetPlatform == TargetPlatform.iOS)
+          const IOSOpenTokVideoView(viewType: viewType)
+        else
+          throw UnsupportedError('Unsupported platform view'),
+        Align(
+          alignment: widget.alignment,
+          child: Padding(
+            padding: widget.padding ?? const EdgeInsets.all(10.0),
+            child: Wrap(
+              direction: widget.direction,
+              alignment: WrapAlignment.center,
+              runAlignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: widget.spacing,
+              children: [
+                if (widget.onEndButtonTap != null)
+                  ElevatedButton(
+                    onPressed: widget.onEndButtonTap,
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        widget.buttonPadding ?? const EdgeInsets.all(10.0),
+                      ),
+                      elevation: MaterialStateProperty.all<double>(8.0),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                    ),
+                    child: const Icon(Icons.call_end),
+                  ),
+                if (widget.onCameraButtonTap != null)
+                  ElevatedButton(
+                    onPressed: widget.onCameraButtonTap,
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        widget.buttonPadding ?? const EdgeInsets.all(10.0),
+                      ),
+                      elevation: MaterialStateProperty.all<double>(8.0),
+                    ),
+                    child: const Icon(Icons.cameraswitch),
+                  ),
+                if (widget.onMicButtonTap != null)
+                  ElevatedButton(
+                    onPressed: () =>
+                        widget.onMicButtonTap?.call(widget.controller.value.audioEnabled),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        widget.buttonPadding ?? const EdgeInsets.all(10.0),
+                      ),
+                      elevation: MaterialStateProperty.all<double>(8.0),
+                    ),
+                    child: widget.controller.value.audioEnabled
+                        ? const Icon(Icons.mic)
+                        : const Icon(Icons.mic_off),
+                  ),
+                if (widget.onVideoButtonTap != null)
+                  ElevatedButton(
+                    onPressed: () =>
+                        widget.onVideoButtonTap?.call(widget.controller.value.videoEnabled),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        widget.buttonPadding ?? const EdgeInsets.all(10.0),
+                      ),
+                      elevation: MaterialStateProperty.all<double>(8.0),
+                    ),
+                    child: widget.controller.value.videoEnabled
+                        ? const Icon(Icons.videocam)
+                        : const Icon(Icons.videocam_off),
+                  ),
+                if (widget.onFullScreenButtonTap != null)
+                  ElevatedButton(
+                    onPressed: widget.onFullScreenButtonTap,
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        widget.buttonPadding ?? const EdgeInsets.all(10.0),
+                      ),
+                      elevation: MaterialStateProperty.all<double>(8.0),
+                    ),
+                    child: const Icon(Icons.fullscreen),
+                  ),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -172,7 +282,11 @@ class AndroidOpenTokVideoView extends StatelessWidget {
         );
       },
       onCreatePlatformView: (PlatformViewCreationParams params) {
-        return PlatformViewsService.initSurfaceAndroidView(
+        // Currently Flutter 3.0 has a bug where flutter widgets can't be rendered
+        // on top of a native view. This bug is occuring when using initSurfaceAndroidView or
+        // initAndroidView. We should revert back to one of these methods once the bug is fixed.
+        // Track it here: https://github.com/flutter/flutter/issues/103630
+        return PlatformViewsService.initExpensiveAndroidView(
           id: params.id,
           viewType: viewType,
           layoutDirection: TextDirection.ltr,

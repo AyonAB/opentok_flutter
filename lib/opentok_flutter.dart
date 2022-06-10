@@ -13,7 +13,9 @@ class OpenTokFlutter implements OpenTokPlatformApi {
 
   /// Create [OpenTokFlutter] class with necessary config values and register a callback for connection status update.
   /// [OpenTokConfig] contains API key, Session Id & Token.
-  OpenTokFlutter(OpenTokConfig config, {this.onUpdate}) : _config = config;
+  OpenTokFlutter(OpenTokConfig config, {this.onUpdate}) : _config = config {
+    OpenTokPlatformApi.setup(this);
+  }
 
   /// Returns new state from platform side.
   @override
