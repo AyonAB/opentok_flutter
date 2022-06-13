@@ -11,10 +11,12 @@ A new Flutter plugin project.
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Ayon Das' => 'ayantorres@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
+  s.dependency 'OpenTok'
+  s.static_framework = true
   s.platform = :ios, '9.0'
 
   # Flutter.framework does not contain a i386 slice.
