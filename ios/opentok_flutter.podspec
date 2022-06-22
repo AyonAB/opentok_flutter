@@ -14,6 +14,7 @@ A new Flutter plugin project.
   s.author           = { 'Ayon Das' => 'ayantorres@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
+  s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'OpenTok'
   s.static_framework = true
@@ -21,5 +22,4 @@ A new Flutter plugin project.
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
-  s.swift_version = '5.0'
 end

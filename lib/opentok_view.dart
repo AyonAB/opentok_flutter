@@ -65,6 +65,13 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
   /// Ends the OpenTok session.
   void endSession() async {
     await _openTokFlutter?.endSession();
+
+    // Reset the OpenTok session to default values
+    value = value.copyWith(
+      state: open_tok.ConnectionState.loggedOut,
+      audioEnabled: true,
+      videoEnabled: true,
+    );
   }
 
   /// Toggle/Switch between front/back camera if available.
@@ -316,6 +323,7 @@ class IOSOpenTokVideoView extends StatelessWidget {
       layoutDirection: TextDirection.ltr,
       creationParams: const {},
       creationParamsCodec: const StandardMessageCodec(),
+      gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
     );
   }
 }

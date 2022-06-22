@@ -1,15 +1,18 @@
 PODS:
   - Flutter (1.0.0)
-  - OpenTok (2.22.2):
-    - VonageWebRTC (= 84.0.20)
+  - OpenTok (2.22.3):
+    - VonageWebRTC (= 84.0.21)
   - opentok_flutter (0.0.1):
     - Flutter
     - OpenTok
-  - VonageWebRTC (84.0.20)
+  - permission_handler_apple (9.0.4):
+    - Flutter
+  - VonageWebRTC (84.0.21)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - opentok_flutter (from `.symlinks/plugins/opentok_flutter/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
 
 SPEC REPOS:
   trunk:
@@ -21,13 +24,16 @@ EXTERNAL SOURCES:
     :path: Flutter
   opentok_flutter:
     :path: ".symlinks/plugins/opentok_flutter/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
 
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  OpenTok: 097187cb5a0116431ef5f2fdf5a2b4261bb2be42
-  opentok_flutter: 8547d46f637a6f3db8116b83e845637a4e5fc46d
-  VonageWebRTC: 20e0e56f656ddbf49287cacbd33e69dbbe5736f8
+  OpenTok: 532cdb6254b7bf41c64f8ad761469d6f7a154c7b
+  opentok_flutter: 6a67780362a25e3aa2cc2f4ef4aa9e4e5df40a19
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  VonageWebRTC: cfa7aefc3fe6e95bcbd778e8973af90fe9bfd497
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: 49f0a94925fd042dab9c0b13c38fec788bdee8d7
 
 COCOAPODS: 1.11.3
