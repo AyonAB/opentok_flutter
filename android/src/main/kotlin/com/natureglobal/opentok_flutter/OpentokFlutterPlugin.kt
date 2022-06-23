@@ -128,7 +128,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
                 "onStreamDropped: Stream Dropped: " + stream.streamId + " in session: " + session.sessionId
             )
 
-            if (subscriber != null && subscriber?.stream?.streamId.equals(stream.streamId)) {
+            if (subscriber != null) {
                 cleanUpSubscriber()
             }
         }
@@ -154,9 +154,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
                     "onStreamDestroyed: Publisher Stream Destroyed. Own stream " + stream.streamId
                 )
 
-                if (subscriber?.stream?.streamId.equals(stream.streamId)) {
-                    cleanUpSubscriber()
-                }
+                cleanUpSubscriber()
                 cleanUpPublisher()
             }
 
@@ -203,6 +201,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
 
     private fun cleanUpPublisher() {
         opentokVideoPlatformView.publisherContainer.removeAllViews()
+        publisher = null
     }
 
     private fun cleanUpSubscriber() {
