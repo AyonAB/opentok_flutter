@@ -5,7 +5,9 @@ enum ConnectionState { loggedOut, loggedIn, wait, onCall, error }
 class ConnectionStateCallback {
   final ConnectionState state;
 
-  const ConnectionStateCallback(this.state);
+  final String? errorDescription;
+
+  const ConnectionStateCallback(this.state, {this.errorDescription});
 }
 
 class OpenTokConfig {

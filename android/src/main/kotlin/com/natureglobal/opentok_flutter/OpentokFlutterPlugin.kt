@@ -72,11 +72,9 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
     // region Opentok callbacks
     private val sessionListener: Session.SessionListener = object : Session.SessionListener {
         override fun onConnected(session: Session) {
-            // Connected to session
-            Log.d("OpenTok Flutter", "Connected to session ${session.sessionId}")
-
             publisher = Publisher.Builder(context).build().apply {
                 setPublisherListener(publisherListener)
+
                 renderer?.setStyle(
                     BaseVideoRenderer.STYLE_VIDEO_SCALE,
                     BaseVideoRenderer.STYLE_VIDEO_FILL
@@ -103,11 +101,6 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
         }
 
         override fun onStreamReceived(session: Session, stream: Stream) {
-            Log.d(
-                "OpenTok Flutter",
-                "onStreamReceived: New Stream Received " + stream.streamId + " in session: " + session.sessionId
-            )
-
             if (subscriber != null) return
 
             subscriber = Subscriber.Builder(context, stream).build().apply {
@@ -123,76 +116,53 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
         }
 
         override fun onStreamDropped(session: Session, stream: Stream) {
-            Log.d(
-                "OpenTok Flutter",
-                "onStreamDropped: Stream Dropped: " + stream.streamId + " in session: " + session.sessionId
-            )
-
             if (subscriber != null) {
                 cleanUpSubscriber()
             }
         }
 
         override fun onError(session: Session, opentokError: OpentokError) {
-            Log.d("OpenTok Flutter", "Session error: " + opentokError.message)
-            notifyFlutter(OpenTok.ConnectionState.error)
+            notifyFlutter(OpenTok.ConnectionState.error, opentokError.message)
         }
     }
 
     private val publisherListener: PublisherKit.PublisherListener =
         object : PublisherKit.PublisherListener {
-            override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {
-                Log.d(
-                    "OpenTok Flutter",
-                    "onStreamCreated: Publisher Stream Created. Own stream " + stream.streamId
-                )
-            }
+            override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {}
 
             override fun onStreamDestroyed(publisherKit: PublisherKit, stream: Stream) {
-                Log.d(
-                    "OpenTok Flutter",
-                    "onStreamDestroyed: Publisher Stream Destroyed. Own stream " + stream.streamId
-                )
-
                 cleanUpSubscriber()
                 cleanUpPublisher()
             }
 
             override fun onError(publisherKit: PublisherKit, opentokError: OpentokError) {
-                Log.d("OpenTok Flutter", "PublisherKit onError: " + opentokError.message)
-                notifyFlutter(OpenTok.ConnectionState.error)
+                notifyFlutter(OpenTok.ConnectionState.error, opentokError.message)
                 cleanUpPublisher()
             }
         }
 
     private val subscriberListener: SubscriberKit.SubscriberListener =
         object : SubscriberKit.SubscriberListener {
-            override fun onConnected(subscriberKit: SubscriberKit) {
-                Log.d(
-                    "OpenTok Flutter",
-                    "onConnected: Subscriber connected. Stream: " + subscriberKit.stream.streamId
-                )
-            }
+            override fun onConnected(subscriberKit: SubscriberKit) {}
 
             override fun onDisconnected(subscriberKit: SubscriberKit) {
-                Log.d(
-                    "OpenTok Flutter",
-                    "onDisconnected: Subscriber disconnected. Stream: " + subscriberKit.stream.streamId
-                )
                 notifyFlutter(OpenTok.ConnectionState.loggedOut)
             }
 
             override fun onError(subscriberKit: SubscriberKit, opentokError: OpentokError) {
-                Log.d("OpenTok Flutter", "SubscriberKit onError: " + opentokError.message)
-                notifyFlutter(OpenTok.ConnectionState.error)
+                notifyFlutter(OpenTok.ConnectionState.error, opentokError.message)
             }
         }
     // endregion
 
     // region Private methods
-    private fun notifyFlutter(@NonNull state: OpenTok.ConnectionState) {
+    private fun notifyFlutter(
+        @NonNull state: OpenTok.ConnectionState,
+        errorDescription: String? = null
+    ) {
         val connectionStateCallback: OpenTok.ConnectionStateCallback =
             OpenTok.ConnectionStateCallback.Builder().setState(state)
+                .setErrorDescription(errorDescription)
                 .build()
         Handler(Looper.getMainLooper()).post {
             openTokPlatform.onStateUpdate(connectionStateCallback) {}

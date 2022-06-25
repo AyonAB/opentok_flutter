@@ -19,6 +19,10 @@ class OpenTokValue {
   /// Whether publisher video is enabled or not.
   final bool videoEnabled;
 
+  /// An optional error description. This will be non-null
+  /// if the [open_tok.ConnectionState] is [open_tok.ConnectionState.error].
+  final String? errorDescription;
+
   /// Constructs a [OpenTokValue] with the given values.
   ///
   /// [open_tok.ConnectionState] is [open_tok.ConnectionState.loggedOut] by default.
@@ -27,15 +31,22 @@ class OpenTokValue {
     this.state = open_tok.ConnectionState.loggedOut,
     this.audioEnabled = true,
     this.videoEnabled = true,
+    this.errorDescription,
   });
 
   /// Returns a new instance that has the same values as this current instance,
   /// except for any overrides passed in as arguments to [copyWith].
-  OpenTokValue copyWith({open_tok.ConnectionState? state, bool? audioEnabled, bool? videoEnabled}) {
+  OpenTokValue copyWith({
+    open_tok.ConnectionState? state,
+    bool? audioEnabled,
+    bool? videoEnabled,
+    String? errorDescription,
+  }) {
     return OpenTokValue(
       state: state ?? this.state,
       audioEnabled: audioEnabled ?? this.audioEnabled,
       videoEnabled: videoEnabled ?? this.videoEnabled,
+      errorDescription: errorDescription,
     );
   }
 }
@@ -52,8 +63,8 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
   /// This method gets called whenever the OpenTok session state changes.
   ///
   /// The new state value is also passed as a parameter.
-  void onStateUpdate(open_tok.ConnectionState state) async {
-    value = value.copyWith(state: state);
+  void onStateUpdate(open_tok.ConnectionStateCallback connection) async {
+    value = value.copyWith(state: connection.state, errorDescription: connection.errorDescription);
   }
 
   /// Initiates a OpenTok session with the given [open_tok.OpenTokConfig] values.

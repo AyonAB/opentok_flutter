@@ -1,15 +1,15 @@
 import 'package:opentok_flutter/opentok.dart';
 
 /// This class takes the OpenTok config and connects with platform side.
-/// 
+///
 /// This class also handles platform callbacks.
 class OpenTokFlutter implements OpenTokPlatformApi {
   final OpenTokConfig _config;
   final OpenTokHostApi _openTokHostApi = OpenTokHostApi();
 
   /// A callback to notify client about new connection state.
-  /// returns [ConnectionState] enum.
-  final void Function(ConnectionState)? onUpdate;
+  /// returns [ConnectionState] enum & an optional error description.
+  final void Function(ConnectionStateCallback)? onUpdate;
 
   /// Create [OpenTokFlutter] class with necessary config values and register a callback for connection status update.
   /// [OpenTokConfig] contains API key, Session Id & Token.
@@ -19,8 +19,7 @@ class OpenTokFlutter implements OpenTokPlatformApi {
 
   /// Returns new state from platform side.
   @override
-  void onStateUpdate(ConnectionStateCallback connectionState) =>
-      onUpdate?.call(connectionState.state);
+  void onStateUpdate(ConnectionStateCallback connectionState) => onUpdate?.call(connectionState);
 
   /// Initiates a opentok session with the given [OpenTokConfig] value.
   Future<void> initSession() async {
