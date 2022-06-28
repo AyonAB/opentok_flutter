@@ -35,13 +35,13 @@ OpentokVideoFactory *factory;
 // MARK: OpenTok flutter API methods
 - (void)initSessionConfig:(nonnull FLTOpenTokConfig *)config error:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
   OTError *otError = nil;
-  [self notifyStateChange:FLTConnectionStateWait];
+  [self notifyStateChange:FLTConnectionStateWait errorDescription:nil];
 
   _session = [[OTSession alloc] initWithApiKey:config.apiKey sessionId:config.sessionId delegate:self];
   [_session connectWithToken:config.token error:&otError];
 
   if (otError) {
-    [self notifyStateChange:FLTConnectionStateError];
+    [self notifyStateChange:FLTConnectionStateError errorDescription:otError.localizedDescription];
   }
 }
 
@@ -50,7 +50,7 @@ OpentokVideoFactory *factory;
   [_session disconnect:&otError];
 
   if (otError) {
-    [self notifyStateChange:FLTConnectionStateError];
+    [self notifyStateChange:FLTConnectionStateError errorDescription:otError.localizedDescription];
   }
 }
 
@@ -73,7 +73,7 @@ OpentokVideoFactory *factory;
 
 // MARK: OpenTok session callbacks
 - (void)session:(nonnull OTSession *)session didFailWithError:(nonnull OTError *)error {
-  [self notifyStateChange:FLTConnectionStateError];
+  [self notifyStateChange:FLTConnectionStateError errorDescription:error.localizedDescription];
 }
 
 - (void)session:(nonnull OTSession *)session streamCreated:(nonnull OTStream *)stream {
@@ -86,12 +86,12 @@ OpentokVideoFactory *factory;
   [session subscribe:_subscriber error:&otError];
 
   if (otError) {
-    [self notifyStateChange:FLTConnectionStateError];
+    [self notifyStateChange:FLTConnectionStateError errorDescription:otError.localizedDescription];
   }
 }
 
 - (void)session:(nonnull OTSession *)session streamDestroyed:(nonnull OTStream *)stream {
-  [self notifyStateChange:FLTConnectionStateLoggedOut];
+  [self notifyStateChange:FLTConnectionStateLoggedOut errorDescription:nil];
 
   if ([_subscriber.stream.streamId isEqualToString:stream.streamId]) {
       [self cleanupSubscriber];
@@ -106,7 +106,7 @@ OpentokVideoFactory *factory;
 
 - (void)sessionDidConnect:(nonnull OTSession *)session {
   OTError *otError = nil;
-  [self notifyStateChange:FLTConnectionStateLoggedIn];
+  [self notifyStateChange:FLTConnectionStateLoggedIn errorDescription:nil];
 
   OTPublisherSettings *settings = [[OTPublisherSettings alloc] init];
   settings.name = [UIDevice currentDevice].name;
@@ -115,7 +115,7 @@ OpentokVideoFactory *factory;
   [_session publish:_publisher error:&otError];
 
   if (otError) {
-    [self notifyStateChange:FLTConnectionStateError];
+    [self notifyStateChange:FLTConnectionStateError errorDescription:otError.localizedDescription];
   }
 
   if ([_publisher view] == nil) {
@@ -130,13 +130,13 @@ OpentokVideoFactory *factory;
 }
 
 - (void)sessionDidDisconnect:(nonnull OTSession *)session {
-  [self notifyStateChange:FLTConnectionStateLoggedOut];
+  [self notifyStateChange:FLTConnectionStateLoggedOut errorDescription:nil];
 }
 
 
 // MARK: OpenTok subscriber callbacks
 - (void)subscriber:(nonnull OTSubscriberKit *)subscriber didFailWithError:(nonnull OTError *)error {
-  [self notifyStateChange:FLTConnectionStateError];
+  [self notifyStateChange:FLTConnectionStateError errorDescription:error.localizedDescription];
 }
 
 - (void)subscriberDidConnectToStream:(nonnull OTSubscriberKit *)subscriber {
@@ -156,7 +156,7 @@ OpentokVideoFactory *factory;
 
 // MARK: OpenTok publisher callbacks
 - (void)publisher:(nonnull OTPublisherKit *)publisher didFailWithError:(nonnull OTError *)error {
-  [self notifyStateChange:FLTConnectionStateError];
+  [self notifyStateChange:FLTConnectionStateError errorDescription:error.localizedDescription];
   [self cleanupPublisher];
 }
 
@@ -170,8 +170,8 @@ OpentokVideoFactory *factory;
 
 
 // MARK: Private methods
-- (void)notifyStateChange:(FLTConnectionState)state {
-  FLTConnectionStateCallback *connectionStateCallback = [FLTConnectionStateCallback makeWithState:state];
+- (void)notifyStateChange:(FLTConnectionState)state errorDescription:(nullable NSString *)errorDescription {
+  FLTConnectionStateCallback *connectionStateCallback = [FLTConnectionStateCallback makeWithState:state errorDescription:errorDescription];
   [_opentokFlutterApi onStateUpdateConnectionState:connectionStateCallback completion:^(NSError *error) {}];
 }
 
