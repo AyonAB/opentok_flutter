@@ -45,7 +45,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
 
     // region Opentok flutter plugin methods
     override fun initSession(config: OpenTok.OpenTokConfig) {
-        notifyFlutter(OpenTok.ConnectionState.wait)
+        notifyFlutter(OpenTok.ConnectionState.WAIT)
 
         session = Session.Builder(context, config.apiKey, config.sessionId).build()
         session?.setSessionListener(sessionListener)
@@ -91,13 +91,13 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
                 }
             }
 
-            notifyFlutter(OpenTok.ConnectionState.loggedIn)
+            notifyFlutter(OpenTok.ConnectionState.LOGGED_IN)
 
             session.publish(publisher)
         }
 
         override fun onDisconnected(session: Session) {
-            notifyFlutter(OpenTok.ConnectionState.loggedOut)
+            notifyFlutter(OpenTok.ConnectionState.LOGGED_OUT)
         }
 
         override fun onStreamReceived(session: Session, stream: Stream) {
@@ -122,7 +122,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
         }
 
         override fun onError(session: Session, opentokError: OpentokError) {
-            notifyFlutter(OpenTok.ConnectionState.error, opentokError.message)
+            notifyFlutter(OpenTok.ConnectionState.ERROR, opentokError.message)
         }
     }
 
@@ -136,7 +136,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
             }
 
             override fun onError(publisherKit: PublisherKit, opentokError: OpentokError) {
-                notifyFlutter(OpenTok.ConnectionState.error, opentokError.message)
+                notifyFlutter(OpenTok.ConnectionState.ERROR, opentokError.message)
                 cleanUpPublisher()
             }
         }
@@ -146,11 +146,11 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
             override fun onConnected(subscriberKit: SubscriberKit) {}
 
             override fun onDisconnected(subscriberKit: SubscriberKit) {
-                notifyFlutter(OpenTok.ConnectionState.loggedOut)
+                notifyFlutter(OpenTok.ConnectionState.LOGGED_OUT)
             }
 
             override fun onError(subscriberKit: SubscriberKit, opentokError: OpentokError) {
-                notifyFlutter(OpenTok.ConnectionState.error, opentokError.message)
+                notifyFlutter(OpenTok.ConnectionState.ERROR, opentokError.message)
             }
         }
     // endregion
