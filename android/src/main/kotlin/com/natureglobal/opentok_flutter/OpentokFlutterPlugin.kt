@@ -24,20 +24,20 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
     private lateinit var opentokVideoPlatformView: OpentokVideoPlatformView
 
     // region Lifecycle methods
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        OpenTok.OpenTokHostApi.setup(flutterPluginBinding.binaryMessenger, this)
-        openTokPlatform = OpenTok.OpenTokPlatformApi(flutterPluginBinding.binaryMessenger)
-
-        context = flutterPluginBinding.applicationContext
-        opentokVideoPlatformView = OpentokVideoFactory.getViewInstance(context)
-
+    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             "opentok-video-container",
             OpentokVideoFactory()
         )
+
+        context = flutterPluginBinding.applicationContext
+        opentokVideoPlatformView = OpentokVideoFactory.getViewInstance(context)
+
+        OpenTok.OpenTokHostApi.setup(flutterPluginBinding.binaryMessenger, this)
+        openTokPlatform = OpenTok.OpenTokPlatformApi(flutterPluginBinding.binaryMessenger)
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         OpenTok.OpenTokHostApi.setup(binding.binaryMessenger, null)
         context = null
     }
@@ -102,17 +102,19 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
 
         override fun onStreamReceived(session: Session, stream: Stream) {
             if (subscriber != null) return
+            // If the incoming stream is the same as publisher then ignore.
+            if (stream.streamId.equals(publisher?.stream?.streamId)) return
 
-            subscriber = Subscriber.Builder(context, stream).build().apply {
-                renderer?.setStyle(
+            subscriber = Subscriber.Builder(context, stream).build().also {
+                it.renderer?.setStyle(
                     BaseVideoRenderer.STYLE_VIDEO_SCALE,
                     BaseVideoRenderer.STYLE_VIDEO_FIT
                 )
-                setSubscriberListener(subscriberListener)
-                session.subscribe(this)
-
-                opentokVideoPlatformView.subscriberContainer.addView(view)
+                it.setSubscriberListener(subscriberListener)
             }
+
+            session.subscribe(subscriber)
+            opentokVideoPlatformView.subscriberContainer.addView(subscriber?.view)
         }
 
         override fun onStreamDropped(session: Session, stream: Stream) {
@@ -157,7 +159,7 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
 
     // region Private methods
     private fun notifyFlutter(
-        @NonNull state: OpenTok.ConnectionState,
+        state: OpenTok.ConnectionState,
         errorDescription: String? = null
     ) {
         val connectionStateCallback: OpenTok.ConnectionStateCallback =

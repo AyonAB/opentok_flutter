@@ -311,7 +311,9 @@ class AndroidOpenTokVideoView extends StatelessWidget {
           creationParams: {},
           creationParamsCodec: const StandardMessageCodec(),
           onFocus: () => params.onFocusChanged(true),
-        )..addOnPlatformViewCreatedListener(params.onPlatformViewCreated);
+        )
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..create();
       },
     );
   }
