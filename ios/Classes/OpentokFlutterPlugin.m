@@ -77,9 +77,9 @@ OpentokVideoFactory *factory;
 }
 
 - (void)session:(nonnull OTSession *)session streamCreated:(nonnull OTStream *)stream {
-  if (_subscriber != nil) {
-    return;
-  }
+  if (_subscriber != nil) return;
+  // If the incoming stream is the same as publisher then ignore.
+  if (stream.streamId == _publisher.stream.streamId) return;
 
   OTError *otError = nil;
   _subscriber = [[OTSubscriber alloc] initWithStream:stream delegate:self];
