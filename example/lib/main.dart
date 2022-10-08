@@ -19,6 +19,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late OpenTokConfig _config;
   late OpenTokController _controller;
+  bool isFullScreen = true;
 
   @override
   void initState() {
@@ -63,9 +64,13 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
       body: SizedBox(
-        //height: MediaQuery.of(context).size.height * 0.8,
+        height: isFullScreen
+            ? MediaQuery.of(context).size.height
+            : MediaQuery.of(context).size.height * 0.5,
         child: OpenTokView(
           controller: _controller,
+          padding: const EdgeInsets.only(bottom: 10),
+          onFullScreenButtonTap: () => setState(() => isFullScreen = !isFullScreen),
           onEndButtonTap: () => _controller.endSession(),
           onCameraButtonTap: () => _controller.toggleCamera(),
           onMicButtonTap: (isEnabled) => _controller.toggleAudio(!isEnabled),

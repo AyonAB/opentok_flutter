@@ -39,12 +39,78 @@ OpenTokVideoContainer *videoContainer;
 
 - (void) addSubscriberView : (UIView *) view {
   [videoContainer insertSubview:view atIndex:0];
-  [view setFrame:videoContainer.bounds];
+  [view setTranslatesAutoresizingMaskIntoConstraints: NO];
+  NSLayoutConstraint *horizontal = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeLeading
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:videoContainer
+                                    attribute:NSLayoutAttributeLeading
+                                    multiplier:1.0
+                                    constant:0];
+  NSLayoutConstraint *vertical = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeTop
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:videoContainer
+                                    attribute:NSLayoutAttributeTop
+                                    multiplier:1.0
+                                    constant:0];
+  NSLayoutConstraint *width = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeWidth
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:videoContainer
+                                    attribute:NSLayoutAttributeWidth
+                                    multiplier:1.0
+                                    constant:0];
+  NSLayoutConstraint *height = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeHeight
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:videoContainer
+                                    attribute:NSLayoutAttributeHeight
+                                    multiplier:1.0
+                                    constant:0];
+  [videoContainer addConstraints:[NSArray arrayWithObjects:horizontal, vertical, width, height, nil]];
 }
 
 - (void) addPublisherView : (UIView *) view {
   [videoContainer addSubview:view];
-  [view setFrame:CGRectMake(videoContainer.bounds.size.width - 120 - 20, videoContainer.bounds.size.height - 160 - 70, 120, 160)];
+  [view setTranslatesAutoresizingMaskIntoConstraints: NO];
+  NSLayoutConstraint *horizontal = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeRight
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:videoContainer
+                                    attribute:NSLayoutAttributeRight
+                                    multiplier:1.0
+                                    constant:-20];
+  NSLayoutConstraint *vertical = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeBottom
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:videoContainer
+                                    attribute:NSLayoutAttributeBottom
+                                    multiplier:1.0
+                                    constant:-70];
+  NSLayoutConstraint *width = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeWidth
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:nil
+                                    attribute:NSLayoutAttributeNotAnAttribute
+                                    multiplier:1.0
+                                    constant:120];
+  NSLayoutConstraint *height = [NSLayoutConstraint
+                                    constraintWithItem:view
+                                    attribute:NSLayoutAttributeHeight
+                                    relatedBy:NSLayoutRelationEqual
+                                    toItem:nil
+                                    attribute:NSLayoutAttributeNotAnAttribute
+                                    multiplier:1.0
+                                    constant:160];
+  [videoContainer addConstraints:[NSArray arrayWithObjects:horizontal, vertical, width, height, nil]];
 }
 
 @end
