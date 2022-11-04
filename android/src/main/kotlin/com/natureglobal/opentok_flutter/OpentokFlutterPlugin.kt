@@ -4,9 +4,7 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.ViewGroup
-import androidx.annotation.NonNull
 import com.opentok.android.*
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -173,12 +171,20 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
 
     private fun cleanUpPublisher() {
         opentokVideoPlatformView.publisherContainer.removeAllViews()
-        publisher = null
+        if (publisher != null) {
+            session?.unpublish(publisher)
+            // OnStop method is called to release the hardware resource (e.g. camera, microphone)
+            publisher?.onStop()
+            publisher = null
+        }
     }
 
     private fun cleanUpSubscriber() {
         opentokVideoPlatformView.subscriberContainer.removeAllViews()
-        subscriber = null
+        if (subscriber != null) {
+            session?.unsubscribe(subscriber)
+            subscriber = null
+        }
     }
     // endregion
 }
