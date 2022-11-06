@@ -101,6 +101,27 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
     value = value.copyWith(videoEnabled: enabled);
     await _openTokFlutter?.toggleVideo(enabled);
   }
+
+  /// Pauses the video session.
+  ///
+  /// Invoke it when the app goes to background with an active session.
+  void pause() async {
+    await _openTokFlutter?.onPause();
+  }
+
+  /// Resumes the video session.
+  ///
+  /// Invoke it when the app comes back to foreground with an active session.
+  void resume() async {
+    await _openTokFlutter?.onResume();
+  }
+
+  /// Disposes the already ended session so that the hardware resources can be freed.
+  ///
+  /// Invoke it after [endSession] if needed.
+  void disposeVideo() async {
+    await _openTokFlutter?.onStop();
+  }
 }
 
 /// Widget that displays the OpenTok video controlled by [controller].

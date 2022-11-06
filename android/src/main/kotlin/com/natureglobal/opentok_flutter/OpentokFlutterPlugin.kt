@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.ViewGroup
 import com.opentok.android.*
 
@@ -64,6 +65,28 @@ class OpentokFlutterPlugin : FlutterPlugin, OpenTok.OpenTokHostApi {
 
     override fun toggleVideo(enabled: Boolean) {
         publisher?.publishVideo = enabled
+    }
+
+    override fun onPause() {
+        try {
+            session?.onPause()
+            AudioDeviceManager.getAudioDevice().stopCapturer()
+        } catch (ex: Exception) {
+            Log.e("OpenTok Flutter", ex.message ?: "Error on pause", ex.cause)
+        }
+    }
+
+    override fun onResume() {
+        try {
+            session?.onResume()
+            AudioDeviceManager.getAudioDevice().startCapturer()
+        } catch (ex: Exception) {
+            Log.e("OpenTok Flutter", ex.message ?: "Error on resume", ex.cause)
+        }
+    }
+
+    override fun onStop() {
+        publisher?.onStop()
     }
     // endregion
 

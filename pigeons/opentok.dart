@@ -33,6 +33,12 @@ abstract class OpenTokHostApi {
   void toggleAudio(bool enabled);
 
   void toggleVideo(bool enabled);
+
+  void onPause();
+
+  void onResume();
+
+  void onStop();
 }
 
 @FlutterApi()

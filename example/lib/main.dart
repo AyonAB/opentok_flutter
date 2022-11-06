@@ -16,15 +16,35 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late OpenTokConfig _config;
-  late OpenTokController _controller;
+  OpenTokController? _controller;
   bool isFullScreen = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     initPlatformState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _controller?.resume();
+        break;
+      case AppLifecycleState.paused:
+        _controller?.pause();
+        break;
+      default:
+    }
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -44,7 +64,7 @@ class _MyAppState extends State<MyApp> {
       final isGranted = statuses[Permission.camera] == PermissionStatus.granted &&
           statuses[Permission.microphone] == PermissionStatus.granted;
       if (isGranted) {
-        _controller.initSession(_config);
+        _controller?.initSession(_config);
       } else {
         debugPrint("Camera or Microphone permission or both denied by the user!");
       }
@@ -58,7 +78,7 @@ class _MyAppState extends State<MyApp> {
         title: const Text('Plugin example app'),
         actions: [
           IconButton(
-            onPressed: () => _controller.initSession(_config),
+            onPressed: () => _controller?.initSession(_config),
             icon: const Icon(Icons.video_call_rounded),
           )
         ],
@@ -68,13 +88,13 @@ class _MyAppState extends State<MyApp> {
             ? MediaQuery.of(context).size.height
             : MediaQuery.of(context).size.height * 0.5,
         child: OpenTokView(
-          controller: _controller,
+          controller: _controller ?? OpenTokController(),
           padding: const EdgeInsets.only(bottom: 10),
           onFullScreenButtonTap: () => setState(() => isFullScreen = !isFullScreen),
-          onEndButtonTap: () => _controller.endSession(),
-          onCameraButtonTap: () => _controller.toggleCamera(),
-          onMicButtonTap: (isEnabled) => _controller.toggleAudio(!isEnabled),
-          onVideoButtonTap: (isEnabled) => _controller.toggleVideo(!isEnabled),
+          onEndButtonTap: () => _controller?.endSession(),
+          onCameraButtonTap: () => _controller?.toggleCamera(),
+          onMicButtonTap: (isEnabled) => _controller?.toggleAudio(!isEnabled),
+          onVideoButtonTap: (isEnabled) => _controller?.toggleVideo(!isEnabled),
         ),
       ),
     );
