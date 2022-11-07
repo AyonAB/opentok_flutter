@@ -70,6 +70,18 @@ OpentokVideoFactory *factory;
   [_publisher setPublishVideo:enabled.boolValue];
 }
 
+- (void)onPauseWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+  return;
+}
+
+- (void)onResumeWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+  return;
+}
+
+- (void)onStopWithError:(FlutterError * _Nullable __autoreleasing * _Nonnull)error {
+  return;
+}
+
 
 // MARK: OpenTok session callbacks
 - (void)session:(nonnull OTSession *)session didFailWithError:(nonnull OTError *)error {
@@ -176,13 +188,15 @@ OpentokVideoFactory *factory;
 }
 
 - (void)cleanupPublisher {
-    [_publisher.view removeFromSuperview];
-    _publisher = nil;
+  [_publisher.view removeFromSuperview];
+  [_session unpublish:_publisher error:nil];
+  _publisher = nil;
 }
 
 - (void)cleanupSubscriber {
-    [_subscriber.view removeFromSuperview];
-    _subscriber = nil;
+  [_subscriber.view removeFromSuperview];
+  [_session unsubscribe:_subscriber error:nil];
+  _subscriber = nil;
 }
 
 @end

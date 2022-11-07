@@ -69,6 +69,8 @@ class OpenTokFlutter implements OpenTokPlatformApi {
   /// Pauses the session including camera & audio.
   ///
   /// Invoke this method whenever your app goes to background if there is an active session.
+  ///
+  /// This method is only for Android. On iOS will do nothing.
   Future<void> onPause() async {
     try {
       return await _openTokHostApi.onPause();
@@ -80,6 +82,8 @@ class OpenTokFlutter implements OpenTokPlatformApi {
   /// Resumes the session.
   ///
   /// Invoke this method whenever your app comes back to foreground if there is an active session.
+  ///
+  /// This method is only for Android. On iOS will do nothing.
   Future<void> onResume() async {
     try {
       return await _openTokHostApi.onResume();
@@ -89,8 +93,10 @@ class OpenTokFlutter implements OpenTokPlatformApi {
   }
 
   /// Forcefully releases hardware resources (e.g. camera, microphone etc.) from using.
-  /// 
+  ///
   /// Use it after the session is over if needed.
+  ///
+  /// This method is only for Android. On iOS will do nothing.
   Future<void> onStop() async {
     try {
       return await _openTokHostApi.onStop();

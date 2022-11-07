@@ -105,6 +105,8 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
   /// Pauses the video session.
   ///
   /// Invoke it when the app goes to background with an active session.
+  ///
+  /// This method is only for Android. On iOS will do nothing.
   void pause() async {
     await _openTokFlutter?.onPause();
   }
@@ -112,6 +114,8 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
   /// Resumes the video session.
   ///
   /// Invoke it when the app comes back to foreground with an active session.
+  ///
+  /// This method is only for Android. On iOS will do nothing.
   void resume() async {
     await _openTokFlutter?.onResume();
   }
@@ -119,6 +123,8 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
   /// Disposes the already ended session so that the hardware resources can be freed.
   ///
   /// Invoke it after [endSession] if needed.
+  ///
+  /// This method is only for Android. On iOS will do nothing.
   void disposeVideo() async {
     await _openTokFlutter?.onStop();
   }
