@@ -1,12 +1,12 @@
 name: opentok_flutter
 description: A basic OpenTok plugin for Flutter.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/AyonAB/opentok_flutter
 issue_tracker: https://github.com/AyonAB/opentok_flutter/issues
 
 environment:
-  sdk: ">=2.17.1 <3.0.0"
-  flutter: ">=2.5.0"
+  sdk: ">=3.2.0 <4.0.0"
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -15,7 +15,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.1
+  flutter_lints: ^6.0.0
   pigeon: ^4.2.5
 
 # For information on the generic Dart part of this file, see the
