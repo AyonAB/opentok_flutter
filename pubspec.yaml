@@ -1,6 +1,6 @@
 name: opentok_flutter
 description: A basic OpenTok plugin for Flutter.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/AyonAB/opentok_flutter
 issue_tracker: https://github.com/AyonAB/opentok_flutter/issues
 

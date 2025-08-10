@@ -1,18 +1,10 @@
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
+
 group 'com.natureglobal.opentok_flutter'
 version '1.0-SNAPSHOT'
-
-buildscript {
-    ext.kotlin_version = '1.7.20'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
 
 rootProject.allprojects {
     repositories {
@@ -21,11 +13,9 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
 android {
-    compileSdkVersion 33
+    namespace 'com.natureglobal.opentok_flutter'
+    compileSdkVersion 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -41,12 +31,12 @@ android {
     }
 
     defaultConfig {
+        compileSdk 35
         minSdkVersion 21
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.opentok.android:opentok-android-sdk:2.22.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
