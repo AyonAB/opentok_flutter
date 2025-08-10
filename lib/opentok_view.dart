@@ -134,7 +134,7 @@ class OpenTokController extends ValueNotifier<OpenTokValue> {
 class OpenTokView extends StatefulWidget {
   /// Constructs an instance of [OpenTokView] with the given [controller].
   const OpenTokView({
-    Key? key,
+    super.key,
     required this.controller,
     this.alignment = Alignment.bottomCenter,
     this.direction = Axis.horizontal,
@@ -146,7 +146,7 @@ class OpenTokView extends StatefulWidget {
     this.onMicButtonTap,
     this.onVideoButtonTap,
     this.onFullScreenButtonTap,
-  }) : super(key: key);
+  });
 
   /// The [OpenTokController] responsible for the OpenTok video being rendered in this widget.
   final OpenTokController controller;
@@ -235,12 +235,12 @@ class _OpenTokViewState extends State<OpenTokView> {
                   ElevatedButton(
                     onPressed: widget.onEndButtonTap,
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                         widget.buttonPadding ?? const EdgeInsets.all(10.0),
                       ),
-                      elevation: MaterialStateProperty.all<double>(8.0),
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                      elevation: WidgetStateProperty.all<double>(8.0),
+                      backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
                     ),
                     child: const Icon(Icons.call_end),
                   ),
@@ -248,11 +248,11 @@ class _OpenTokViewState extends State<OpenTokView> {
                   ElevatedButton(
                     onPressed: widget.onCameraButtonTap,
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                         widget.buttonPadding ?? const EdgeInsets.all(10.0),
                       ),
-                      elevation: MaterialStateProperty.all<double>(8.0),
+                      elevation: WidgetStateProperty.all<double>(8.0),
                     ),
                     child: const Icon(Icons.cameraswitch),
                   ),
@@ -261,11 +261,11 @@ class _OpenTokViewState extends State<OpenTokView> {
                     onPressed: () =>
                         widget.onMicButtonTap?.call(widget.controller.value.audioEnabled),
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                         widget.buttonPadding ?? const EdgeInsets.all(10.0),
                       ),
-                      elevation: MaterialStateProperty.all<double>(8.0),
+                      elevation: WidgetStateProperty.all<double>(8.0),
                     ),
                     child: widget.controller.value.audioEnabled
                         ? const Icon(Icons.mic)
@@ -276,11 +276,11 @@ class _OpenTokViewState extends State<OpenTokView> {
                     onPressed: () =>
                         widget.onVideoButtonTap?.call(widget.controller.value.videoEnabled),
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                         widget.buttonPadding ?? const EdgeInsets.all(10.0),
                       ),
-                      elevation: MaterialStateProperty.all<double>(8.0),
+                      elevation: WidgetStateProperty.all<double>(8.0),
                     ),
                     child: widget.controller.value.videoEnabled
                         ? const Icon(Icons.videocam)
@@ -290,11 +290,11 @@ class _OpenTokViewState extends State<OpenTokView> {
                   ElevatedButton(
                     onPressed: widget.onFullScreenButtonTap,
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all<CircleBorder>(const CircleBorder()),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                      padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                         widget.buttonPadding ?? const EdgeInsets.all(10.0),
                       ),
-                      elevation: MaterialStateProperty.all<double>(8.0),
+                      elevation: WidgetStateProperty.all<double>(8.0),
                     ),
                     child: const Icon(Icons.fullscreen),
                   ),
@@ -313,7 +313,7 @@ class AndroidOpenTokVideoView extends StatelessWidget {
   final String viewType;
 
   /// Constructs an [AndroidOpenTokVideoView] instance with the given [viewType].
-  const AndroidOpenTokVideoView({Key? key, required this.viewType}) : super(key: key);
+  const AndroidOpenTokVideoView({super.key, required this.viewType});
 
   @override
   Widget build(BuildContext context) {
@@ -352,7 +352,7 @@ class IOSOpenTokVideoView extends StatelessWidget {
   final String viewType;
 
   /// Constructs an [IOSOpenTokVideoView] instance with the given [viewType].
-  const IOSOpenTokVideoView({Key? key, required this.viewType}) : super(key: key);
+  const IOSOpenTokVideoView({super.key, required this.viewType});
 
   @override
   Widget build(BuildContext context) {
